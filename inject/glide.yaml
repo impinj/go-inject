@@ -1,0 +1,7 @@
+package: main
+import:
+- package: github.com/onsi/gomega
+- package: github.com/onsi/ginkgo
+- package: github.com/golang/mock
+  subpackages:
+  - gomock
