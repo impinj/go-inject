@@ -5,15 +5,15 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"go-inject/inject/mock"
 	"go-inject/inject"
+	"go-inject/inject/mock"
 )
 
 var _ = Describe("SingletonProvider", func() {
 	var (
-		mockCtrl *gomock.Controller
-		mockProvider *mock_inject.MockProvider
-		provider *inject.SingletonProvider
+		mockCtrl      *gomock.Controller
+		mockProvider  *mock_inject.MockProvider
+		provider      *inject.SingletonProvider
 		resolvedValue interface{}
 	)
 

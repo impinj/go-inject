@@ -4,7 +4,9 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.go'| \
 	grep -v test| \
 	grep -v mock)
 
-all:	clean devtools build test
+PACKAGE=go-inject/inject
+
+all:	clean devtools vet fmt build test
 
 .PHONY: deps
 deps:
@@ -21,8 +23,8 @@ build:	deps $(SOURCES)
 
 .PHONY: mocks
 mocks:	$(SOURCES)
-	mockgen -destination=inject/mock/MockGraph.go go-inject/inject Graph
-	mockgen -destination=inject/mock/MockProvider.go go-inject/inject Provider
+	mockgen -destination=inject/mock/MockGraph.go $(PACKAGE) Graph
+	mockgen -destination=inject/mock/MockProvider.go $(PACKAGE) Provider
 
 .PHONY: test
 test:	deps mocks
@@ -35,6 +37,14 @@ clean:
 	do                                       \
 		rm -rf $$vendor;                 \
 	done
+
+.PHONY: fmt
+fmt:	$(SOURCES)
+	go fmt $(PACKAGE)
+
+.PHONY: vet
+vet:	$(SOURCES)
+	go vet $(PACKAGE)
 
 .PHONY: devtools
 devtools:
