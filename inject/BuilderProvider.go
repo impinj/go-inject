@@ -4,7 +4,6 @@ import "reflect"
 
 type BuilderProvider struct {
 	Name           string
-	Complete       bool
 	Context        reflect.Type
 	Builder        interface{}
 	ResolveContext Graph
@@ -23,7 +22,7 @@ func (p BuilderProvider) GetType() reflect.Type {
 }
 
 func (p BuilderProvider) IsComplete() bool {
-	return p.Complete
+	return false
 }
 
 func (p BuilderProvider) Resolve() interface{} {

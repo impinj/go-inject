@@ -3,10 +3,11 @@ package inject_test
 import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
-	"go-inject/inject"
-	"go-inject/inject/mock"
+	"github.com/impinj/go-inject/inject"
+	"github.com/impinj/go-inject/inject/mock"
 )
 
 var _ = Describe("SingletonProvider", func() {
@@ -27,6 +28,15 @@ var _ = Describe("SingletonProvider", func() {
 	AfterEach(func() {
 		mockCtrl.Finish()
 	})
+
+	DescribeTable("IsComplete",
+		func(v interface{}, expected bool) {
+			provider.Value = v
+			Expect(provider.IsComplete()).To(Equal(expected))
+		},
+		Entry("Nil value", nil, false),
+		Entry("Non-nil value", struct{}{}, true),
+	)
 
 	Describe("Resolve", func() {
 		Context("With no wrapped provider", func() {

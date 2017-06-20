@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
-	. "go-inject/inject"
+	. "github.com/impinj/go-inject/inject"
 	"reflect"
 )
 

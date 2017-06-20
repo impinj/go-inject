@@ -1,10 +1,11 @@
-SOURCEDIR=.
-SOURCES := $(shell find $(SOURCEDIR) -name '*.go'| \
-	grep -v vendor| \
-	grep -v test| \
+SOURCEDIR=inject/
+SOURCES := $(shell find $(SOURCEDIR) -name '*.go' | \
+	grep -v vendor                                | \
+	grep -v test                                  | \
 	grep -v mock)
 
-PACKAGE=go-inject/inject
+PACKAGE=github.com/impinj/go-inject/inject
+SAMPLE=github.com/impinj/go-inject/sample
 
 all:	clean devtools vet fmt build test
 
@@ -12,17 +13,20 @@ all:	clean devtools vet fmt build test
 deps:
 	find . -name glide.yaml | while read gf;    \
 	do                                          \
-		pushd $$(dirname $$gf) > /dev/null; \
-		glide install;                      \
-		popd > /dev/null;                   \
+		pushd $$(dirname $$gf) > /dev/null;     \
+		glide install;                          \
+		popd > /dev/null;                       \
 	done
 
 .PHONY: build
 build:	deps $(SOURCES)
-	go build go-inject/inject
+	go build $(PACKAGE)
+
+sample:
+	go build $(SAMPLE)
 
 .PHONY: mocks
-mocks:	$(SOURCES)
+mocks:	devtools $(SOURCES)
 	mockgen -destination=inject/mock/MockGraph.go $(PACKAGE) Graph
 	mockgen -destination=inject/mock/MockProvider.go $(PACKAGE) Provider
 
@@ -35,7 +39,7 @@ clean:
 	go clean
 	find . -name vendor | while read vendor; \
 	do                                       \
-		rm -rf $$vendor;                 \
+		rm -rf $$vendor;                     \
 	done
 
 .PHONY: fmt
