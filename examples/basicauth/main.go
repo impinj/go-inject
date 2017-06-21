@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/impinj/go-inject/inject"
-	"github.com/impinj/go-inject/sample/hello"
-	"github.com/impinj/go-inject/sample/oauth"
-	"github.com/impinj/go-inject/sample/token"
+	"github.com/impinj/go-inject/examples/basicauth/hello"
+	"github.com/impinj/go-inject/examples/basicauth/oauth"
+	"github.com/impinj/go-inject/examples/basicauth/token"
 )
 
 func main() {

@@ -5,7 +5,7 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.go' | \
 	grep -v mock)
 
 PACKAGE=github.com/impinj/go-inject/inject
-SAMPLE=github.com/impinj/go-inject/sample
+SAMPLE=github.com/impinj/go-inject/examples/basicauth
 
 all:	clean devtools vet fmt build test
 

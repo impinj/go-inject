@@ -1,7 +1,7 @@
 package hello
 
 import (
-	"github.com/impinj/go-inject/sample/token"
+	"github.com/impinj/go-inject/examples/basicauth/token"
 )
 
 type HelloService struct {

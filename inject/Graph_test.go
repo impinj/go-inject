@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
+	"fmt"
 	. "github.com/impinj/go-inject/inject"
 	"reflect"
 )
@@ -456,6 +457,64 @@ var _ = Describe("Graph", func() {
 		})
 	})
 
+	Describe("Find", func() {
+		var (
+			typeInfo, context reflect.Type
+			name              string
+			expected          error
+		)
+
+		BeforeEach(func() {
+			typeInfo = reflect.TypeOf((*StructA)(nil))
+		})
+
+		Context("With no matching providers", func() {
+			BeforeEach(func() {
+				expected = fmt.Errorf("Could not find provider for %s.", typeInfo)
+			})
+
+			It("Returns nil and error", func() {
+				v, err := g.Find(typeInfo, context, name)
+				Expect(v).To(BeNil())
+				Expect(err).To(Equal(expected))
+			})
+		})
+
+		Context("With just the right number of providers (1)", func() {
+			BeforeEach(func() {
+				g.Provide(
+					&ValueProvider{Value: &StructA{}},
+				)
+			})
+
+			It("Returns the value and no error", func() {
+				v, err := g.Find(typeInfo, context, name)
+				Expect(reflect.TypeOf(v)).To(Equal(typeInfo))
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
+		Context("With too many matching providers", func() {
+			BeforeEach(func() {
+				expected = fmt.Errorf("Found multiple providers for type: %s, context: %s, name: %s.",
+					typeInfo,
+					context,
+					name)
+
+				g.Provide(
+					&ValueProvider{Value: &StructA{}},
+					&ValueProvider{Value: &StructA{}},
+				)
+			})
+
+			It("Returns nil and error", func() {
+				v, err := g.Find(typeInfo, context, name)
+				Expect(v).To(BeNil())
+				Expect(err).To(Equal(expected))
+			})
+		})
+	})
+
 	Describe("Resolve", func() {
 		DescribeTable("Resolve with different value types",
 			func(providers ...Provider) {
@@ -465,6 +524,24 @@ var _ = Describe("Graph", func() {
 			Entry("An int", &ValueProvider{Value: 5}),
 			Entry("A map", &ValueProvider{Value: map[string]string{}}),
 		)
+
+		Context("There exists an unmet dependency", func() {
+			BeforeEach(func() {
+				g.Provide(
+					&ValueProvider{Value: &StructA{}},
+				)
+			})
+
+			It("Returns the expected error correctly", func() {
+				Expect(g.Resolve()).To(Equal(fmt.Errorf("Encountered error while trying to complete (%s): %s",
+					reflect.TypeOf((*StructA)(nil)),
+					fmt.Errorf("Encountered error attempting to set a field (%s) of type %s: %s",
+						"B",
+						reflect.TypeOf((*StructB)(nil)),
+						fmt.Errorf("Could not find provider for %s.",
+							reflect.TypeOf((*StructB)(nil)))))))
+			})
+		})
 
 		Context("Builder function", func() {
 			var (

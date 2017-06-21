@@ -1,6 +1,6 @@
 package oauth
 
-import "github.com/impinj/go-inject/sample/token"
+import "github.com/impinj/go-inject/examples/basicauth/token"
 
 type OAuthTokenService struct {}
 
